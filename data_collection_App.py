@@ -35,7 +35,7 @@ class FaceWidget(QOpenGLWidget):
         self.rotation_timer.timeout.connect(self.update_rotation)
         self.rotation_timer.start(30) 
         self.start_time = time.time()
-
+        self.setFocusPolicy(Qt.StrongFocus)  
     def update_rotation(self):
         
         if time.time() - self.start_time > self.rotation_duration:
@@ -46,6 +46,17 @@ class FaceWidget(QOpenGLWidget):
         self.auto_rotate_angle += self.auto_rotate_direction * self.rotation_speed
         if self.auto_rotate_angle > self.max_yaw or self.auto_rotate_angle < -self.max_yaw:
             self.auto_rotate_direction *= -1
+        self.update()
+    def keyPressEvent(self, event):
+        step = 5  # degrees per key press
+        if event.key() == Qt.Key_Left:
+            self.rot_y -= step
+        elif event.key() == Qt.Key_Right:
+            self.rot_y += step
+        elif event.key() == Qt.Key_Up:
+            self.rot_x -= step
+        elif event.key() == Qt.Key_Down:
+            self.rot_x += step
         self.update()
 
     def initializeGL(self):
@@ -247,7 +258,7 @@ class MainWindow(QtWidgets.QMainWindow):
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
-
+        self.face_widget.setFocus()
         self.likert_labels = likert_labels
 
     def next_item(self):
